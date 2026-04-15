@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TranslatorMode {
+  boss_to_truth
+  truth_to_polite
+}
+
+model StatusOption {
+  id           String         @id @default(cuid())
+  statusKey    String         @unique
+  statusName   String
+  displayOrder Int            @default(0)
+  isActive     Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  records      StatusRecord[]
+}
+
+model StatusRecord {
+  id        String   @id @default(cuid())
+  statusKey String
+  deviceId  String
+  date      DateTime
+  createdAt DateTime @default(now())
+
+  status StatusOption @relation(fields: [statusKey], references: [statusKey])
+
+  @@unique([deviceId, date])
+  @@index([statusKey, date])
+}
+
+model ResonanceCard {
+  id            String   @id @default(cuid())
+  type          String
+  title         String
+  content       String
+  tag           String
+  sortOrder     Int      @default(0)
+  likeRealCount Int      @default(0)
+  likeSayCount  Int      @default(0)
+  likeSameCount Int      @default(0)
+  status        String   @default("published")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  reactions CardReaction[]
+}
+
+model CardReaction {
+  id           String   @id @default(cuid())
+  cardId        String
+  deviceId      String
+  reactionType  String
+  createdAt     DateTime @default(now())
+
+  card ResonanceCard @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@index([cardId, reactionType])
+  @@unique([cardId, deviceId, reactionType])
+}
+
+model TranslatorTemplate {
+  id           String         @id @default(cuid())
+  mode         TranslatorMode
+  keyword      String
+  templateText String
+  priority     Int            @default(0)
+  status       String         @default("active")
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+}
+
+model TranslatorExample {
+  id        String         @id @default(cuid())
+  mode      TranslatorMode
+  content   String
+  sortOrder Int            @default(0)
+  status    String         @default("active")
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model TranslatorLog {
+  id         String         @id @default(cuid())
+  mode       TranslatorMode
+  inputText  String
+  resultText String
+  createdAt  DateTime       @default(now())
+}
+
+model ComfortText {
+  id          String   @id @default(cuid())
+  category    String   @default("general")
+  content     String
+  isDailyPick Boolean  @default(false)
+  status      String   @default("active")
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SiteConfig {
+  id          String   @id @default(cuid())
+  offWorkTime String   @default("18:00")
+  payday      Int      @default(15)
+  siteName    String   @default("工位补能站")
+  slogan      String   @default("献给每一个表面正常上班、实际全靠硬撑的人")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
