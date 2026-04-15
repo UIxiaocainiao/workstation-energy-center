@@ -3,14 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-enum TranslatorMode {
-  boss_to_truth
-  truth_to_polite
-}
 
 model StatusOption {
   id           String         @id @default(cuid())
@@ -68,7 +64,7 @@ model CardReaction {
 
 model TranslatorTemplate {
   id           String         @id @default(cuid())
-  mode         TranslatorMode
+  mode         String
   keyword      String
   templateText String
   priority     Int            @default(0)
@@ -79,7 +75,7 @@ model TranslatorTemplate {
 
 model TranslatorExample {
   id        String         @id @default(cuid())
-  mode      TranslatorMode
+  mode      String
   content   String
   sortOrder Int            @default(0)
   status    String         @default("active")
@@ -89,7 +85,7 @@ model TranslatorExample {
 
 model TranslatorLog {
   id         String         @id @default(cuid())
-  mode       TranslatorMode
+  mode       String
   inputText  String
   resultText String
   createdAt  DateTime       @default(now())

@@ -1,4 +1,4 @@
-import { PrismaClient, TranslatorMode } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -64,25 +64,25 @@ async function main() {
 
   const templates = [
     {
-      mode: TranslatorMode.boss_to_truth,
+      mode: "boss_to_truth",
       keyword: "不复杂",
       templateText: "真实含义：这事不叫简单，只是默认由你承受复杂度。",
       priority: 100
     },
     {
-      mode: TranslatorMode.boss_to_truth,
+      mode: "boss_to_truth",
       keyword: "跟进",
       templateText: "真实含义：先由你把这件事接住，后面进度也主要由你兜。",
       priority: 90
     },
     {
-      mode: TranslatorMode.truth_to_polite,
+      mode: "truth_to_polite",
       keyword: "不是我的",
       templateText: "更体面的表达：当前任务与我的职责边界暂不完全匹配，建议先确认归属。",
       priority: 100
     },
     {
-      mode: TranslatorMode.truth_to_polite,
+      mode: "truth_to_polite",
       keyword: "时间不够",
       templateText: "更体面的表达：按照当前排期评估，交付时间存在明显风险，建议协调资源或调整节点。",
       priority: 90
@@ -94,12 +94,12 @@ async function main() {
   }
 
   const examples = [
-    { mode: TranslatorMode.boss_to_truth, content: "这个需求不复杂", sortOrder: 1 },
-    { mode: TranslatorMode.boss_to_truth, content: "你先跟进一下", sortOrder: 2 },
-    { mode: TranslatorMode.boss_to_truth, content: "我们再优化一下细节", sortOrder: 3 },
-    { mode: TranslatorMode.truth_to_polite, content: "这活不是我的", sortOrder: 1 },
-    { mode: TranslatorMode.truth_to_polite, content: "这个需求改太多次了", sortOrder: 2 },
-    { mode: TranslatorMode.truth_to_polite, content: "这时间根本不够", sortOrder: 3 }
+    { mode: "boss_to_truth", content: "这个需求不复杂", sortOrder: 1 },
+    { mode: "boss_to_truth", content: "你先跟进一下", sortOrder: 2 },
+    { mode: "boss_to_truth", content: "我们再优化一下细节", sortOrder: 3 },
+    { mode: "truth_to_polite", content: "这活不是我的", sortOrder: 1 },
+    { mode: "truth_to_polite", content: "这个需求改太多次了", sortOrder: 2 },
+    { mode: "truth_to_polite", content: "这时间根本不够", sortOrder: 3 }
   ];
 
   for (const item of examples) {

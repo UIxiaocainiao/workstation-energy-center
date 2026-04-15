@@ -2,13 +2,14 @@ import Link from "next/link";
 import { PageShell } from "@/components/layout/PageShell";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { StatusSign } from "@/components/features/StatusSign";
+import { StatusSignComponent } from "@/components/features/StatusSignComponent";
 import { Countdown } from "@/components/features/Countdown";
 import { Translator } from "@/components/features/Translator";
 import { FeaturedCards } from "@/components/features/FeaturedCards";
 import { ComfortBox } from "@/components/features/ComfortBox";
 
 export default function HomePage() {
+  const today = new Date().toISOString().slice(0, 10);
   return (
     <PageShell>
       <section className="container-page pt-10 md:pt-16">
@@ -36,7 +37,7 @@ export default function HomePage() {
       </section>
 
       <section className="container-page mt-10">
-        <StatusSign />
+        <StatusSignComponent date={new Date().toISOString().slice(0, 10)} />
       </section>
 
       <section className="container-page mt-10">
