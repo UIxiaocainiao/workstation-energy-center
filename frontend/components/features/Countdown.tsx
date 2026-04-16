@@ -53,10 +53,10 @@ export function Countdown() {
         <Card
           key={item.label}
           className={cn(
-            item.primary && "border-brand-500/20 bg-brand-500/5"
+            item.primary && "border-brand-500/30 bg-brand-500/10"
           )}
         >
-          <div className="text-sm text-slate-400">{item.label}</div>
+          <div className="text-sm text-[var(--color-silver)]">{item.label}</div>
           <div
             className={cn(
               "mt-2 text-2xl font-semibold tabular-nums",
@@ -65,7 +65,7 @@ export function Countdown() {
           >
             {item.value}
           </div>
-          <div className="mt-2 text-sm text-slate-500">{item.tip}</div>
+          <div className="mt-2 text-sm text-white/45">{item.tip}</div>
         </Card>
       ))}
     </section>

@@ -6,8 +6,8 @@ export default function Page() {
     <PageShell>
       <section className="container-page pt-10">
         <Card>
-          <h1 className="text-2xl font-semibold">翻译器语料管理</h1>
-          <p className="mt-2 text-slate-400">这里预留后台 CRUD 页面，后续可直接接入表格、表单和权限控制。</p>
+          <h1 className="section-title text-2xl font-medium">翻译器语料管理</h1>
+          <p className="mt-2 text-[var(--color-silver)]">这里预留后台 CRUD 页面，后续可直接接入表格、表单和权限控制。</p>
         </Card>
       </section>
     </PageShell>

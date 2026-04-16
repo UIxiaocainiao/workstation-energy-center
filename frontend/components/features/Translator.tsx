@@ -70,10 +70,10 @@ export function Translator({ compact = false }: { compact?: boolean }) {
   return (
     <Card className="flex flex-col gap-4">
       <div>
-        <h2 className="text-xl font-semibold">
+        <h2 className="section-title text-xl font-medium">
           {compact ? "首页简版黑话翻译器" : "职场黑话翻译器"}
         </h2>
-        <p className="mt-1 text-sm text-slate-400">老板说得很委婉，但你听得很明白。</p>
+        <p className="mt-1 text-sm text-[var(--color-silver)]">老板说得很委婉，但你听得很明白。</p>
       </div>
 
       {/* TR-01/TR-08: Mode toggle - doesn't clear input */}
@@ -82,10 +82,10 @@ export function Translator({ compact = false }: { compact?: boolean }) {
           <button
             key={item.key}
             className={cn(
-              "rounded-xl px-4 py-2 text-sm font-medium transition",
+              "rounded-full border px-4 py-2 text-sm font-medium transition",
               mode === item.key
-                ? "bg-brand-500 text-white"
-                : "bg-white/10 text-slate-300 hover:bg-white/15"
+                ? "border-brand-500/40 bg-brand-500/10 text-brand-100"
+                : "border-[var(--color-frost-border)] bg-white/[0.02] text-white/70 hover:bg-white/[0.06]"
             )}
             onClick={() => {
               setMode(item.key);
@@ -102,7 +102,7 @@ export function Translator({ compact = false }: { compact?: boolean }) {
         {examples.data?.examples.map((example) => (
           <button
             key={example}
-            className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-slate-300 transition hover:bg-white/10"
+            className="rounded-full border border-[var(--color-frost-border)] bg-white/[0.02] px-3 py-1.5 text-xs text-white/70 transition hover:bg-white/[0.06]"
             onClick={() => {
               setInputText(example);
               setValidationMsg("");
@@ -127,7 +127,7 @@ export function Translator({ compact = false }: { compact?: boolean }) {
         {validationMsg && (
           <p className="mt-1.5 text-xs text-brand-500">{validationMsg}</p>
         )}
-        <div className="mt-1 text-right text-xs text-slate-500">
+        <div className="mt-1 text-right text-xs text-white/45">
           {trimmed.length}/100
         </div>
       </div>
@@ -149,7 +149,7 @@ export function Translator({ compact = false }: { compact?: boolean }) {
         {compact && (
           <Link
             href="/blackwords"
-            className="ml-auto text-xs text-slate-400 transition hover:text-slate-200"
+            className="ml-auto text-xs text-white/60 transition hover:text-white/85"
           >
             打开完整翻译器 →
           </Link>
@@ -158,7 +158,7 @@ export function Translator({ compact = false }: { compact?: boolean }) {
 
       {/* TR-06: Result card */}
       {result && (
-        <div className="rounded-2xl border border-brand-500/30 bg-brand-500/10 p-4">
+        <div className="rounded-2xl border border-brand-500/35 bg-brand-500/10 p-4">
           <div className="text-xs text-brand-100">{result.resultType}</div>
           <div className="mt-2 whitespace-pre-wrap text-lg">{result.resultText}</div>
           <div className="mt-4 flex gap-2">

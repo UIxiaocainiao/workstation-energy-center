@@ -2,6 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-black: #000000;
+  --color-near-white: #f0f0f0;
+  --color-white: #ffffff;
+  --color-silver: #a1a4a5;
+  --color-dark-gray: #5c5c5c;
+  --color-frost-border: rgba(214, 235, 253, 0.19);
+  --color-frost-border-alt: rgba(217, 237, 254, 0.145);
+  --color-frost-ring: rgba(176, 199, 217, 0.145);
+  --color-blue-10: #3b9eff;
+  --color-blue-5: #0081fd;
+  --font-display: "Domaine Display", "Iowan Old Style", "Times New Roman", serif;
+  --font-section: "ABC Favorit", "Avenir Next", "Segoe UI", sans-serif;
+  --font-body: "Inter", "PingFang SC", "Noto Sans SC", "Segoe UI", sans-serif;
+  --font-mono: "CommitMono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -11,7 +28,11 @@ html, body, #__next {
 }
 
 body {
-  @apply bg-slate-950 text-slate-100 antialiased;
+  background: var(--color-black);
+  color: var(--color-near-white);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 a {
@@ -23,14 +44,55 @@ a {
 }
 
 .glass-card {
-  @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur;
+  border: 1px solid var(--color-frost-border);
+  background: rgba(255, 255, 255, 0.02);
+  box-shadow: 0 0 0 1px var(--color-frost-ring);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.display-hero {
+  font-family: var(--font-display);
+  font-feature-settings: "ss01", "ss04", "ss11";
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.section-title {
+  font-family: var(--font-section);
+  font-feature-settings: "ss01", "ss04", "ss11";
+  letter-spacing: -0.02em;
+}
+
+.nav-link {
+  font-family: var(--font-section);
+  font-feature-settings: "ss01", "ss03", "ss04";
+  letter-spacing: 0.35px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.frost-border {
+  border-color: var(--color-frost-border);
+}
+
+.text-muted {
+  color: var(--color-silver);
+}
+
+.text-dim {
+  color: var(--color-dark-gray);
+}
+
+code, pre {
+  font-family: var(--font-mono);
 }
 
 /* Module highlight animation for smooth scroll targets */
 @keyframes module-highlight {
-  0% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(236, 72, 153, 0.2); }
-  100% { box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(59, 158, 255, 0.45); }
+  50% { box-shadow: 0 0 0 6px rgba(59, 158, 255, 0.2); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 158, 255, 0); }
 }
 
 .module-highlight {

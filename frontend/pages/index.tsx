@@ -25,15 +25,15 @@ export default function HomePage() {
     <PageShell>
       {/* H-01: Banner - 3秒内说明产品定位 */}
       <section className="container-page pt-10 md:pt-16">
-        <Card className="overflow-hidden p-8 md:p-10">
+        <Card className="overflow-hidden rounded-[24px] p-8 md:p-10">
           <div className="max-w-3xl">
-            <div className="inline-flex rounded-full bg-brand-500/10 px-3 py-1 text-xs text-brand-100">
+            <div className="inline-flex rounded-full border border-[var(--color-frost-border)] bg-brand-500/10 px-3 py-1 text-xs text-brand-100">
               给打工人的情绪缓冲区
             </div>
-            <h1 className="mt-4 text-4xl font-bold tracking-tight md:text-6xl">
+            <h1 className="display-hero mt-4 text-[3.8rem] font-normal tracking-[-0.04em] md:text-[6rem]">
               工位补能站
             </h1>
-            <p className="mt-4 text-lg leading-8 text-slate-300">
+            <p className="mt-4 text-lg leading-8 text-white/75">
               献给每一个表面正常上班、实际全靠硬撑的人。
             </p>
             {/* H-02: 双 CTA 入口 */}

@@ -46,15 +46,15 @@ export function ComfortBox() {
   return (
     <Card className="flex flex-col gap-4">
       <div>
-        <h2 className="text-xl font-semibold">补能盲盒</h2>
-        <p className="mt-1 text-sm text-slate-400">
+        <h2 className="section-title text-xl font-medium">补能盲盒</h2>
+        <p className="mt-1 text-sm text-[var(--color-silver)]">
           {drawnText ? "这一句送给此刻的你" : "默认给你一句轻安慰，撑不住时再抽一条。"}
         </p>
       </div>
 
       {/* E-01/E-03: Comfort text display */}
-      <div className="rounded-2xl border border-white/10 bg-white/5 p-5">
-        <p className="text-lg leading-relaxed text-slate-100">{displayText}</p>
+      <div className="rounded-2xl border border-[var(--color-frost-border)] bg-white/[0.02] p-5">
+        <p className="text-lg leading-relaxed text-[var(--color-near-white)]">{displayText}</p>
       </div>
 
       {/* E-02/E-04: Action buttons */}

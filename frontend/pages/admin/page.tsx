@@ -14,10 +14,14 @@ export default function AdminPage() {
     <PageShell>
       <section className="container-page pt-10">
         <Card>
-          <h1 className="text-2xl font-semibold">后台管理</h1>
+          <h1 className="section-title text-2xl font-medium">后台管理</h1>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
             {items.map((item) => (
-              <Link key={item.href} href={item.href} className="rounded-xl border border-white/10 bg-white/5 p-4">
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-xl border border-[var(--color-frost-border)] bg-white/[0.02] p-4 transition hover:bg-white/[0.05]"
+              >
                 {item.label}
               </Link>
             ))}

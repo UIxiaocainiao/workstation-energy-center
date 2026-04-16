@@ -115,11 +115,11 @@ export function FeaturedCards() {
     return (
       <section className="flex flex-col gap-4">
         <div>
-          <h2 className="text-2xl font-semibold">精选共鸣内容</h2>
-          <p className="mt-1 text-sm text-slate-400">高压工作日里，你并不是一个人。</p>
+          <h2 className="section-title text-2xl font-medium">精选共鸣内容</h2>
+          <p className="mt-1 text-sm text-[var(--color-silver)]">高压工作日里，你并不是一个人。</p>
         </div>
         <Card className="py-12 text-center">
-          <p className="text-slate-400">今天的共鸣内容正在路上，先试试黑话翻译器</p>
+          <p className="text-[var(--color-silver)]">今天的共鸣内容正在路上，先试试黑话翻译器</p>
           <Link href="/blackwords" className="mt-3 inline-block text-sm text-brand-500 hover:text-brand-100">
             去翻译一句 →
           </Link>
@@ -131,8 +131,8 @@ export function FeaturedCards() {
   return (
     <section className="flex flex-col gap-4">
       <div>
-        <h2 className="text-2xl font-semibold">精选共鸣内容</h2>
-        <p className="mt-1 text-sm text-slate-400">高压工作日里，你并不是一个人。</p>
+        <h2 className="section-title text-2xl font-medium">精选共鸣内容</h2>
+        <p className="mt-1 text-sm text-[var(--color-silver)]">高压工作日里，你并不是一个人。</p>
       </div>
 
       {/* C-01: Featured cards grid */}
@@ -144,7 +144,7 @@ export function FeaturedCards() {
                 {item.tag}
               </span>
               <div className="mt-2 text-lg font-semibold">{item.title}</div>
-              <p className="mt-3 text-sm leading-6 text-slate-300">{item.content}</p>
+              <p className="mt-3 text-sm leading-6 text-white/75">{item.content}</p>
             </div>
 
             {/* C-02: Reaction buttons */}
@@ -156,10 +156,10 @@ export function FeaturedCards() {
                   <button
                     key={reaction.type}
                     className={cn(
-                      "rounded-xl px-3 py-1.5 text-xs font-medium transition",
+                      "rounded-full border px-3 py-1.5 text-xs font-medium transition",
                       reacted
-                        ? "bg-brand-500/15 text-brand-100"
-                        : "bg-white/10 text-slate-300 hover:bg-white/15"
+                        ? "border-brand-500/40 bg-brand-500/15 text-brand-100"
+                        : "border-[var(--color-frost-border)] bg-white/[0.02] text-white/70 hover:bg-white/[0.06]"
                     )}
                     onClick={() => handleReaction(item.id, reaction.type)}
                   >

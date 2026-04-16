@@ -45,8 +45,8 @@ export function StatusSign() {
   return (
     <Card className="flex flex-col gap-4">
       <div>
-        <h2 className="text-xl font-semibold">今日状态签到</h2>
-        <p className="mt-1 text-sm text-slate-400">今天的你，更接近哪一种状态？</p>
+        <h2 className="section-title text-xl font-medium">今日状态签到</h2>
+        <p className="mt-1 text-sm text-[var(--color-silver)]">今天的你，更接近哪一种状态？</p>
       </div>
 
       {/* S-01: Status buttons */}
@@ -63,8 +63,8 @@ export function StatusSign() {
               className={cn(
                 "rounded-2xl border px-4 py-4 text-left transition",
                 isSelected
-                  ? "border-brand-500 bg-brand-500/10"
-                  : "border-white/10 bg-white/5 hover:bg-white/10"
+                  ? "border-brand-500/40 bg-brand-500/10"
+                  : "border-[var(--color-frost-border)] bg-white/[0.02] hover:bg-white/[0.05]"
               )}
               onClick={() => handleSubmit(item.key)}
             >
@@ -74,13 +74,13 @@ export function StatusSign() {
               </div>
               {/* S-05: Status percentage bar */}
               <div className="mt-2 flex items-center gap-2">
-                <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/10">
+                <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/[0.1]">
                   <div
                     className="h-full rounded-full bg-brand-500/40 transition-all"
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
-                <span className="text-xs text-slate-400">{count}人</span>
+                <span className="text-xs text-white/60">{count}人</span>
               </div>
             </button>
           );
@@ -88,7 +88,7 @@ export function StatusSign() {
       </div>
 
       {/* S-03/S-05: Feedback area */}
-      <div className="flex items-center justify-between text-sm text-slate-400">
+      <div className="flex items-center justify-between text-sm text-[var(--color-silver)]">
         <span>
           {displayedKey ? "不是你一个人这样。" : "默认游客可用，不需要登录。"}
         </span>
