@@ -102,6 +102,7 @@ export function useStatus(date: string) {
     todayStatus,
     stats,
 
+    submitMutation,
     submit: submitMutation.mutate,
     submitAsync: submitMutation.mutateAsync,
 

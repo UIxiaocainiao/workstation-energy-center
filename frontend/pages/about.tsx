@@ -5,7 +5,7 @@ export default function AboutPage() {
   return (
     <PageShell>
       <section className="container-page pt-10">
-        <Card className="space-y-4">
+        <Card className="flex flex-col gap-4">
           <h1 className="text-3xl font-semibold">关于项目</h1>
           <p className="text-slate-300">
             工位补能站是一个服务于打工人情绪场景的网页产品，通过今日状态签到、黑话翻译器、下班倒计时、

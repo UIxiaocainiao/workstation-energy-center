@@ -1,94 +1,178 @@
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Textarea } from "@/components/ui/Input";
 import { useTranslator, type TranslatorMode } from "@/hooks/useTranslator";
+import { cn } from "@/lib/utils";
 
 const modeOptions: Array<{ key: TranslatorMode; label: string; placeholder: string }> = [
   {
     key: "boss_to_truth",
     label: "老板黑话 → 真实含义",
-    placeholder: "例如：这个需求不复杂"
+    placeholder: "例如：这个需求不复杂",
   },
   {
     key: "truth_to_polite",
     label: "真实吐槽 → 体面表达",
-    placeholder: "例如：这活不是我的"
-  }
+    placeholder: "例如：这活不是我的",
+  },
 ];
 
 export function Translator({ compact = false }: { compact?: boolean }) {
   const [mode, setMode] = useState<TranslatorMode>("boss_to_truth");
   const [inputText, setInputText] = useState("");
+  const [validationMsg, setValidationMsg] = useState("");
   const { examples, generate } = useTranslator(mode);
 
   const currentMode = useMemo(() => modeOptions.find((item) => item.key === mode)!, [mode]);
   const result = generate.data;
+  const trimmed = inputText.trim();
+
+  // TR-09/TR-10: Input validation
+  function validate(): boolean {
+    if (trimmed.length < 2) {
+      setValidationMsg("再多说一点，我才能更懂你");
+      return false;
+    }
+    if (trimmed.length > 100) {
+      setValidationMsg("最多输入 100 字，先抓重点");
+      return false;
+    }
+    setValidationMsg("");
+    return true;
+  }
+
+  function handleGenerate() {
+    if (!validate()) return;
+    generate.mutate(inputText, {
+      onError: () => {
+        // TR-11/TR-12: Preserve input, show error toast
+        toast.error("网络有点忙，点一次重试");
+      },
+    });
+  }
 
   async function handleCopy() {
     if (!result?.resultText) return;
     await navigator.clipboard.writeText(result.resultText);
-    alert("已复制");
+    toast("已复制到剪贴板");
+  }
+
+  // TR-03/TR-04/TR-05: Dynamic button text
+  function getButtonText(): string {
+    if (generate.isPending) return "翻译中...";
+    if (trimmed.length === 0) return "先选一句示例";
+    return "立即翻译";
   }
 
   return (
-    <Card className="space-y-4">
+    <Card className="flex flex-col gap-4">
       <div>
-        <h2 className="text-xl font-semibold">{compact ? "首页简版黑话翻译器" : "职场黑话翻译器"}</h2>
+        <h2 className="text-xl font-semibold">
+          {compact ? "首页简版黑话翻译器" : "职场黑话翻译器"}
+        </h2>
         <p className="mt-1 text-sm text-slate-400">老板说得很委婉，但你听得很明白。</p>
       </div>
 
+      {/* TR-01/TR-08: Mode toggle - doesn't clear input */}
       <div className="flex flex-wrap gap-2">
         {modeOptions.map((item) => (
-          <Button
+          <button
             key={item.key}
-            variant={mode === item.key ? "primary" : "secondary"}
-            onClick={() => setMode(item.key)}
+            className={cn(
+              "rounded-xl px-4 py-2 text-sm font-medium transition",
+              mode === item.key
+                ? "bg-brand-500 text-white"
+                : "bg-white/10 text-slate-300 hover:bg-white/15"
+            )}
+            onClick={() => {
+              setMode(item.key);
+              setValidationMsg("");
+            }}
           >
             {item.label}
-          </Button>
+          </button>
         ))}
       </div>
 
-      <Textarea
-        value={inputText}
-        onChange={(event) => setInputText(event.target.value)}
-        placeholder={currentMode.placeholder}
-        maxLength={100}
-      />
-
+      {/* TR-02: Example tags fill input */}
       <div className="flex flex-wrap gap-2">
         {examples.data?.examples.map((example) => (
-          <Button key={example} variant="ghost" onClick={() => setInputText(example)}>
+          <button
+            key={example}
+            className="rounded-lg bg-white/5 px-3 py-1.5 text-xs text-slate-300 transition hover:bg-white/10"
+            onClick={() => {
+              setInputText(example);
+              setValidationMsg("");
+            }}
+          >
             {example}
-          </Button>
+          </button>
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div>
+        <Textarea
+          value={inputText}
+          onChange={(e) => {
+            setInputText(e.target.value);
+            if (validationMsg) setValidationMsg("");
+          }}
+          placeholder={currentMode.placeholder}
+          maxLength={100}
+        />
+        {/* TR-09/TR-10: Validation message */}
+        {validationMsg && (
+          <p className="mt-1.5 text-xs text-brand-500">{validationMsg}</p>
+        )}
+        <div className="mt-1 text-right text-xs text-slate-500">
+          {trimmed.length}/100
+        </div>
+      </div>
+
+      {/* TR-05/TR-06: Action buttons */}
+      <div className="flex flex-wrap items-center gap-2">
         <Button
-          onClick={() => generate.mutate(inputText)}
-          disabled={inputText.trim().length < 2 || generate.isPending}
+          onClick={handleGenerate}
+          disabled={trimmed.length === 0 || generate.isPending}
         >
-          {generate.isPending ? "生成中..." : "生成结果"}
+          {getButtonText()}
         </Button>
-        {!compact && (
-          <Button
-            variant="secondary"
-            onClick={() => generate.mutate(inputText)}
-            disabled={inputText.trim().length < 2 || generate.isPending}
-          >
+        {result && (
+          <Button variant="secondary" onClick={handleGenerate} disabled={generate.isPending}>
             再来一句
           </Button>
         )}
+        {/* TR-07: Compact mode shows link to full translator */}
+        {compact && (
+          <Link
+            href="/blackwords"
+            className="ml-auto text-xs text-slate-400 transition hover:text-slate-200"
+          >
+            打开完整翻译器 →
+          </Link>
+        )}
       </div>
 
+      {/* TR-06: Result card */}
       {result && (
         <div className="rounded-2xl border border-brand-500/30 bg-brand-500/10 p-4">
           <div className="text-xs text-brand-100">{result.resultType}</div>
           <div className="mt-2 whitespace-pre-wrap text-lg">{result.resultText}</div>
           <div className="mt-4 flex gap-2">
-            <Button onClick={handleCopy}>复制结果</Button>
+            <Button size="sm" onClick={handleCopy}>
+              复制结果
+            </Button>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={handleGenerate}
+              disabled={generate.isPending}
+            >
+              再来一句
+            </Button>
           </div>
         </div>
       )}
