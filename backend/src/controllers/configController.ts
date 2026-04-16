@@ -15,3 +15,21 @@ export async function getSiteConfig(_req: Request, res: Response) {
     }
   );
 }
+
+export async function getTopicModules(_req: Request, res: Response) {
+  const items = await prisma.topicModule.findMany({
+    where: { isActive: true },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
+  });
+
+  res.json({
+    items: items.map((item) => ({
+      id: item.id,
+      topicKey: item.topicKey,
+      topicTitle: item.topicTitle,
+      targetPath: item.targetPath,
+      copies: item.copies,
+      sortOrder: item.sortOrder
+    }))
+  });
+}

@@ -5,11 +5,13 @@ import {
   listCards,
   listComfortTexts,
   listStatusOptions,
+  listTopicModules,
   listTranslatorTemplates,
   upsertAdminSiteConfig,
   upsertCard,
   upsertComfortText,
   upsertStatusOption,
+  upsertTopicModule,
   upsertTranslatorTemplate
 } from "../controllers/adminController";
 
@@ -28,6 +30,9 @@ router.post("/translator-templates", upsertTranslatorTemplate);
 
 router.get("/comfort-texts", listComfortTexts);
 router.post("/comfort-texts", upsertComfortText);
+
+router.get("/topic-modules", listTopicModules);
+router.post("/topic-modules", upsertTopicModule);
 
 router.get("/site-config", getAdminSiteConfig);
 router.post("/site-config", upsertAdminSiteConfig);

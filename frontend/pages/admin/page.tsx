@@ -6,7 +6,8 @@ const items = [
   { href: "/admin/statusManager", label: "状态配置管理" },
   { href: "/admin/cardsManager", label: "共鸣内容管理" },
   { href: "/admin/translatorManager", label: "翻译器语料管理" },
-  { href: "/admin/comfortManager", label: "补能文案管理" }
+  { href: "/admin/comfortManager", label: "补能文案管理" },
+  { href: "/admin/topicModulesManager", label: "话题模块管理" }
 ];
 
 export default function AdminPage() {

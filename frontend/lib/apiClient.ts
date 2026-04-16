@@ -35,12 +35,13 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
 }
 
 export const apiClient = {
-  get: <T>(path: string, query?: RequestOptions["query"]) => request<T>(path, { method: "GET", query }),
-  post: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: "POST", body: body ? JSON.stringify(body) : undefined }),
-  put: <T>(path: string, body?: unknown) =>
-    request<T>(path, { method: "PUT", body: body ? JSON.stringify(body) : undefined }),
-  delete: <T>(path: string) => request<T>(path, { method: "DELETE" })
+  get: <T>(path: string, query?: RequestOptions["query"], options?: Omit<RequestOptions, "method" | "query">) =>
+    request<T>(path, { method: "GET", query, ...options }),
+  post: <T>(path: string, body?: unknown, options?: Omit<RequestOptions, "method" | "body">) =>
+    request<T>(path, { method: "POST", body: body ? JSON.stringify(body) : undefined, ...options }),
+  put: <T>(path: string, body?: unknown, options?: Omit<RequestOptions, "method" | "body">) =>
+    request<T>(path, { method: "PUT", body: body ? JSON.stringify(body) : undefined, ...options }),
+  delete: <T>(path: string, options?: Omit<RequestOptions, "method">) => request<T>(path, { method: "DELETE", ...options })
 };
 
 export { API_BASE_URL };

@@ -15,6 +15,29 @@ async function main() {
     }
   });
 
+  const topicModules = [
+    { topicKey: "topic_01", topicTitle: "今天靠哪口仙气撑着？", targetPath: "/status", copies: 2, sortOrder: 1, isActive: true },
+    { topicKey: "topic_02", topicTitle: "最怕老板哪句经典台词？", targetPath: "/blackwords", copies: 2, sortOrder: 2, isActive: true },
+    { topicKey: "topic_03", topicTitle: "下班前又是谁在加戏？", targetPath: "/resonance", copies: 2, sortOrder: 3, isActive: true },
+    { topicKey: "topic_04", topicTitle: "“在吗”一响，你心凉了吗？", targetPath: "/comfort", copies: 2, sortOrder: 4, isActive: true },
+    { topicKey: "topic_05", topicTitle: "最近耗你电的是活还是人？", targetPath: "/status", copies: 2, sortOrder: 5, isActive: true },
+    { topicKey: "topic_06", topicTitle: "你多久没尝过准点下班了？", targetPath: "/blackwords", copies: 2, sortOrder: 6, isActive: true },
+    { topicKey: "topic_07", topicTitle: "哪种会议最适合灵魂出走？", targetPath: "/resonance", copies: 2, sortOrder: 7, isActive: true },
+    { topicKey: "topic_08", topicTitle: "你还没辞职，是谁拦着你？", targetPath: "/comfort", copies: 2, sortOrder: 8, isActive: true },
+    { topicKey: "topic_09", topicTitle: "上班是讨生活还是渡劫？", targetPath: "/status", copies: 2, sortOrder: 9, isActive: true },
+    { topicKey: "topic_10", topicTitle: "哪句黑话最能气笑你？", targetPath: "/blackwords", copies: 2, sortOrder: 10, isActive: true },
+    { topicKey: "topic_11", topicTitle: "你最想拉黑哪类消息？", targetPath: "/resonance", copies: 2, sortOrder: 11, isActive: true },
+    { topicKey: "topic_12", topicTitle: "今天想给自己发句啥？", targetPath: "/comfort", copies: 2, sortOrder: 12, isActive: true }
+  ];
+
+  for (const item of topicModules) {
+    await prisma.topicModule.upsert({
+      where: { topicKey: item.topicKey },
+      update: item,
+      create: item
+    });
+  }
+
   const statusOptions = [
     { statusKey: "still_holding", statusName: "还能忍", displayOrder: 1 },
     { statusKey: "slightly_crashing", statusName: "轻微崩溃", displayOrder: 2 },

@@ -1,4 +1,4 @@
-import type { TranslatorMode } from "@prisma/client";
+export type TranslatorMode = "boss_to_truth" | "truth_to_polite";
 
 const fallbackMap: Record<TranslatorMode, string[]> = {
   boss_to_truth: [

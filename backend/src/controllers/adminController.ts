@@ -90,6 +90,30 @@ export async function upsertComfortText(req: Request, res: Response) {
   res.json({ item });
 }
 
+export async function listTopicModules(_req: Request, res: Response) {
+  const items = await prisma.topicModule.findMany({
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
+  });
+  res.json({ items });
+}
+
+export async function upsertTopicModule(req: Request, res: Response) {
+  const body = z.object({
+    id: z.string().optional(),
+    topicKey: z.string().min(1),
+    topicTitle: z.string().min(1),
+    targetPath: z.string().min(1),
+    copies: z.number().int().min(1).max(12).default(4),
+    sortOrder: z.number().int().default(0),
+    isActive: z.boolean().default(true)
+  }).parse(req.body);
+
+  const item = body.id
+    ? await prisma.topicModule.update({ where: { id: body.id }, data: body })
+    : await prisma.topicModule.create({ data: body });
+  res.json({ item });
+}
+
 export async function getAdminSiteConfig(_req: Request, res: Response) {
   const item = await prisma.siteConfig.findFirst({ orderBy: { createdAt: "desc" } });
   res.json({ item });
