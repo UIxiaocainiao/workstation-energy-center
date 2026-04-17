@@ -2,10 +2,12 @@ import type { AppProps } from "next/app";
 import "@/styles/globals.css";
 import { AppProviders } from "@/components/AppProviders";
 import { Toaster } from "sonner";
+import { DominioZeroMenu } from "@/components/layout/DominioZeroMenu";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <AppProviders>
+      <DominioZeroMenu />
       <Component {...pageProps} />
       <Toaster
         position="top-center"

@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "DZ Power Grotesk";
+  src: url("https://dominiozero.es/assets/fonts/300-powergrotesk.otf");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DZ Power Grotesk";
+  src: url("https://dominiozero.es/assets/fonts/500-powergrotesk.otf");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DZ Power Grotesk";
+  src: url("https://dominiozero.es/assets/fonts/700-powergrotesk.otf");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --color-black: #000000;
   --color-near-white: #f0f0f0;
@@ -19,6 +43,23 @@
   --font-section: "ABC Favorit", "Avenir Next", "Segoe UI", sans-serif;
   --font-body: "Inter", "PingFang SC", "Noto Sans SC", "Segoe UI", sans-serif;
   --font-mono: "CommitMono", "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
+  --motion-duration-fast: 120ms;
+  --motion-duration-base: 240ms;
+  --motion-duration-slow: 480ms;
+  --motion-ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-emphasis: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-stagger-sm: 40ms;
+  --motion-stagger-md: 80ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 1ms;
+    --motion-duration-base: 1ms;
+    --motion-duration-slow: 1ms;
+    --motion-stagger-sm: 0ms;
+    --motion-stagger-md: 0ms;
+  }
 }
 
 html {
@@ -35,6 +76,367 @@ body {
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+html.dz-nav-open {
+  overflow: hidden;
+}
+
+.dz-main-header {
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  position: fixed;
+  width: 100%;
+  z-index: 20000;
+  mix-blend-mode: difference;
+  align-items: center;
+  font-family: "DZ Power Grotesk", var(--font-section);
+}
+
+.dz-main-header .dz-logo {
+  font-family: var(--font-section);
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: #fff;
+}
+
+.dz-main-header .dz-menu .dz-menu-button {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+  margin-top: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.dz-main-header .dz-menu .dz-menu-button p {
+  font-size: inherit;
+  font-family: "DZ Power Grotesk", var(--font-section);
+  font-weight: 300;
+  margin: 0;
+  line-height: 1;
+}
+
+.dz-main-header .dz-menu .dz-menu-button .dz-menu-button-icon {
+  position: relative;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: inline-block;
+}
+
+.dz-main-header .dz-menu .dz-menu-button .dz-menu-button-icon::before {
+  content: none;
+}
+
+.dz-main-header .dz-menu .dz-menu-button .dz-menu-button-icon .line {
+  width: 1.45rem;
+  height: 2px;
+  background-color: #fff;
+  position: absolute;
+  transition: all 0.3s ease;
+  top: 50%;
+  left: 50%;
+}
+
+.dz-main-header .dz-menu .dz-menu-button .dz-menu-button-icon .line:first-child {
+  transform: translate(-50%, calc(-50% - 4px));
+}
+
+.dz-main-header .dz-menu .dz-menu-button .dz-menu-button-icon .line:last-child {
+  transform: translate(-50%, calc(-50% + 4px));
+}
+
+.dz-main-header.nav-open .dz-menu .dz-menu-button .dz-menu-button-icon .line {
+  background-color: #fff;
+}
+
+.dz-main-header.nav-open .dz-menu .dz-menu-button .dz-menu-button-icon .line:first-child {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.dz-main-header.nav-open .dz-menu .dz-menu-button .dz-menu-button-icon .line:last-child {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.dz-nav-menu {
+  position: fixed;
+  inset: 0;
+  z-index: 19999;
+  display: grid;
+  grid-template-columns: 1fr minmax(340px, 37vw);
+  background-color: #000;
+  opacity: 0;
+  pointer-events: none;
+  clip-path: polygon(0px 0px, 100% 0px, 100% 0px, 0px 0px);
+}
+
+.dz-main-header.nav-open + .dz-nav-menu {
+  pointer-events: auto;
+}
+
+.dz-nav-menu .left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #000;
+  padding-block: 3.75rem;
+  padding-inline: 0 1.5rem;
+}
+
+.dz-nav-menu .left .dz-left-inner {
+  width: min(100%, 930px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.dz-main-nav-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 0;
+}
+
+.dz-nav-menu .left .dz-menu-item {
+  padding-left: 2.85ch;
+  padding-block: 0.26em;
+  color: #fff;
+  text-decoration: none;
+  line-height: 1;
+  position: relative;
+  overflow: hidden;
+  font-size: 4.8rem;
+  cursor: pointer;
+}
+
+.dz-nav-menu .left .dz-menu-item::before {
+  content: "";
+  background-color: #fff;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  transition: transform 0.15s ease-out;
+  transform-origin: center;
+  transform: scaleY(0);
+}
+
+.dz-nav-menu .left .dz-menu-item .dz-menu-item-label {
+  position: relative;
+  display: inline-block;
+  font-family: var(--font-section);
+  font-weight: 600;
+  margin: 0;
+}
+
+.dz-nav-menu .left .dz-menu-item .dz-menu-item-label .open-submenu {
+  font-weight: 300;
+  margin-left: 0.2em;
+  top: -0.075em;
+  position: relative;
+}
+
+.dz-nav-menu .left .dz-menu-item .dz-menu-item-label sup {
+  font-size: 0.2em;
+  position: absolute;
+  top: 1.25em;
+  right: -2em;
+  font-weight: 200;
+}
+
+.dz-nav-menu .left .dz-menu-item .sub-menu {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.2s ease-in-out;
+  padding-left: 2.85ch;
+}
+
+.dz-nav-menu .left .dz-menu-item .sub-menu .sub-menu-list {
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  font-size: 0.4em;
+  font-weight: 500;
+  width: 10.5em;
+  gap: 8px;
+}
+
+.dz-nav-menu .left .dz-menu-item .sub-menu .sub-menu-list a {
+  color: inherit;
+  text-decoration: none;
+  font-family: "DZ Power Grotesk", var(--font-section);
+}
+
+.dz-social-grid {
+  display: flex;
+  gap: 0.45rem;
+  margin-left: 2.95ch;
+  margin-top: 0.7rem;
+  align-items: center;
+}
+
+.dz-social-item {
+  width: 2.15rem;
+  height: 2.15rem;
+  border-radius: 0.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.dz-social-item svg {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+
+.dz-social-item:hover {
+  background: #fff;
+  color: #000;
+}
+
+.dz-nav-menu .left .dz-menu-item.active {
+  color: #000;
+}
+
+.dz-nav-menu .left .dz-menu-item.active::before {
+  transform: scaleY(1);
+}
+
+.dz-nav-menu .left .dz-submenu-toggle {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dz-nav-menu .left:has(.dz-menu-item:hover) .active {
+    color: #fff;
+  }
+
+  .dz-nav-menu .left:has(.dz-menu-item:hover) .active::before {
+    transform: scaleY(0);
+  }
+
+  .dz-nav-menu .left .dz-menu-item:hover,
+  .dz-nav-menu .left .dz-menu-item.active:hover {
+    color: #000;
+  }
+
+  .dz-nav-menu .left .dz-menu-item:hover::before,
+  .dz-nav-menu .left .dz-menu-item.active:hover::before {
+    transform: scaleY(1);
+  }
+}
+
+.dz-nav-menu .right {
+  overflow: hidden;
+  background-color: #000;
+  padding: 3.75rem 2rem 3.75rem 0;
+}
+
+.dz-nav-menu .right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.05);
+}
+
+@media screen and (max-width: 1350px) {
+  .dz-nav-menu .left .dz-menu-item {
+    padding-left: 2ch;
+  }
+
+  .dz-social-grid {
+    margin-left: 2.1ch;
+  }
+}
+
+@media screen and (max-width: 1300px) {
+  .dz-nav-menu {
+    grid-template-columns: 1fr minmax(320px, 35vw);
+  }
+}
+
+@media screen and (max-width: 1050px) {
+  .dz-nav-menu .left .dz-menu-item {
+    font-size: 4.5rem;
+  }
+}
+
+@media screen and (max-width: 978px) {
+  .dz-nav-menu .left .dz-menu-item {
+    font-size: 4rem;
+  }
+}
+
+@media screen and (max-width: 890px) {
+  .dz-nav-menu .left .dz-menu-item {
+    font-size: 3.5rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .dz-main-header {
+    padding: 1rem 1rem;
+  }
+
+  .dz-main-header .dz-menu .dz-menu-button {
+    font-size: 1.6rem;
+  }
+
+  .dz-nav-menu {
+    grid-template-columns: 1fr;
+    display: block;
+    overflow-y: auto;
+    max-height: 100vh;
+    height: auto;
+  }
+
+  .dz-nav-menu .left {
+    padding-top: 6rem;
+    padding-bottom: 3rem;
+    padding-inline: 0;
+    min-height: 100vh;
+  }
+
+  .dz-nav-menu .left .dz-menu-item {
+    font-size: 3rem;
+    padding-left: 1.1rem;
+  }
+
+  .dz-nav-menu .left .dz-menu-item .sub-menu {
+    padding-left: 1.1rem;
+  }
+
+  .dz-nav-menu .left .dz-menu-item .sub-menu .sub-menu-list {
+    font-size: 0.34em;
+  }
+
+  .dz-social-grid {
+    margin-left: 1.1rem;
+    margin-top: 2.2rem;
+  }
+
+  .dz-nav-menu .right {
+    display: none;
+  }
 }
 
 .scene-wrap {
@@ -232,6 +634,38 @@ body {
 
 .scene-wrap.is-topic-hover .scene-canvas {
   cursor: pointer;
+}
+
+.home-hero-shell {
+  border-bottom: 1px solid var(--color-frost-border);
+  background:
+    radial-gradient(110% 90% at 50% 4%, rgba(var(--color-brand-rgb), 0.22), rgba(0, 0, 0, 0) 44%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0.68) 52%, rgba(0, 0, 0, 0.88) 100%);
+}
+
+.home-hero-overlay {
+  background:
+    radial-gradient(70% 56% at 50% 42%, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0) 60%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 0, 0, 0.56) 72%, rgba(0, 0, 0, 0.84) 100%);
+}
+
+.home-hero-panel {
+  background:
+    linear-gradient(140deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.02) 58%, rgba(255, 255, 255, 0.06)),
+    rgba(2, 6, 10, 0.58);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px) saturate(118%);
+}
+
+@media (max-width: 767px) {
+  .home-hero-panel {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.02) 62%, rgba(255, 255, 255, 0.05)),
+      rgba(3, 7, 12, 0.66);
+    backdrop-filter: blur(8px) saturate(112%);
+  }
 }
 
 @media (hover: hover) and (pointer: fine) {
