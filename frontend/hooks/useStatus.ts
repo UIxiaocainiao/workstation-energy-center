@@ -9,6 +9,14 @@ export type StatusOption = {
   count?: number;
 };
 
+type StatusOptionsResponse = {
+  items: Array<{
+    statusKey: string;
+    statusName: string;
+    displayOrder: number;
+  }>;
+};
+
 type TodayStatusResponse = {
   record: {
     statusKey: string;
@@ -40,6 +48,13 @@ export function useStatus(date: string) {
     if (typeof window === "undefined") return "";
     return getDeviceId();
   }, []);
+
+  const statusOptions = useQuery<StatusOptionsResponse>({
+    queryKey: ["status-options"],
+    queryFn: () => apiClient.get<StatusOptionsResponse>("/status/options"),
+    retry: 1,
+    staleTime: 60_000,
+  });
 
   const todayStatus = useQuery<TodayStatusResponse>({
     queryKey: ["today-status", deviceId, date],
@@ -88,6 +103,10 @@ export function useStatus(date: string) {
   const selectedStatusKey = todayStatus.data?.record?.statusKey ?? null;
   const statsItems = stats.data?.items ?? [];
   const total = stats.data?.total ?? 0;
+  const options: StatusOption[] = (statusOptions.data?.items ?? []).map((item) => ({
+    key: item.statusKey,
+    name: item.statusName,
+  }));
 
   const getCountByKey = (statusKey: string) => {
     return statsItems.find((item) => item.statusKey === statusKey)?.count ?? 0;
@@ -95,10 +114,12 @@ export function useStatus(date: string) {
 
   return {
     deviceId,
+    options,
     selectedStatusKey,
     statsItems,
     total,
 
+    statusOptions,
     todayStatus,
     stats,
 
@@ -110,10 +131,12 @@ export function useStatus(date: string) {
     submitError: submitMutation.error,
     isSubmitError: submitMutation.isError,
 
+    isStatusOptionsLoading: statusOptions.isLoading,
     isTodayStatusLoading: todayStatus.isLoading,
     isStatsLoading: stats.isLoading,
-    isLoading: todayStatus.isLoading || stats.isLoading,
+    isLoading: statusOptions.isLoading || todayStatus.isLoading || stats.isLoading,
 
+    refetchStatusOptions: statusOptions.refetch,
     refetchTodayStatus: todayStatus.refetch,
     refetchStats: stats.refetch,
 

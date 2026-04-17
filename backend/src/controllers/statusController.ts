@@ -3,6 +3,25 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma";
 import { getStatusStats, upsertStatusRecord } from "../services/statusService";
 
+export async function getStatusOptions(_req: Request, res: Response, next: NextFunction) {
+  try {
+    const items = await prisma.statusOption.findMany({
+      where: { isActive: true },
+      orderBy: { displayOrder: "asc" }
+    });
+
+    res.json({
+      items: items.map((item) => ({
+        statusKey: item.statusKey,
+        statusName: item.statusName,
+        displayOrder: item.displayOrder
+      }))
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
 const submitSchema = z.object({
   statusKey: z.string().min(1),
   deviceId: z.string().min(1),

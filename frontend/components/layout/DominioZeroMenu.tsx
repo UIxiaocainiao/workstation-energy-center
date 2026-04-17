@@ -13,8 +13,6 @@ type MenuItem = {
 const HOVER_IMAGES = {
   home: "https://dominiozero.es/assets/img/menu/home.jpg",
   about: "https://dominiozero.es/assets/img/menu/about.jpg",
-  work: "https://dominiozero.es/assets/img/menu/work.jpg",
-  services: "https://dominiozero.es/assets/img/menu/servicios.jpg",
 } as const;
 
 const menuItems: MenuItem[] = [
@@ -23,16 +21,6 @@ const menuItems: MenuItem[] = [
     href: "/",
     hoverImg: HOVER_IMAGES.home,
     isActive: (pathname) => pathname === "/",
-  },
-  {
-    label: "黑话翻译器",
-    href: "/blackwords",
-    hoverImg: HOVER_IMAGES.work,
-  },
-  {
-    label: "今日补能",
-    href: "/comfort",
-    hoverImg: HOVER_IMAGES.services,
   },
   {
     label: "关于项目",

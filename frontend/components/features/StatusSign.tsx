@@ -4,17 +4,17 @@ import { Card } from "@/components/ui/Card";
 import { useStatus } from "@/hooks/useStatus";
 import { cn } from "@/lib/utils";
 
-const OPTIONS = [
-  { key: "still_holding", name: "还能忍", emoji: "😤" },
-  { key: "slightly_crashing", name: "轻微崩溃", emoji: "😵" },
-  { key: "soul_out", name: "灵魂出窍", emoji: "👻" },
-  { key: "online_but_off", name: "表面在线，实际关机", emoji: "🔌" },
-  { key: "quit_but_mortgage", name: "想辞职但房贷不同意", emoji: "🏠" },
-];
+const STATUS_EMOJI_MAP: Record<string, string> = {
+  still_holding: "😤",
+  slightly_crashing: "😵",
+  soul_out: "👻",
+  online_but_off: "🔌",
+  quit_but_mortgage: "🏠",
+};
 
 export function StatusSign() {
   const date = new Date().toISOString().slice(0, 10);
-  const { selectedStatusKey, total, getCountByKey, isSubmitting, submitMutation } = useStatus(date);
+  const { options, selectedStatusKey, total, getCountByKey, isSubmitting, submitMutation } = useStatus(date);
   const [pendingKey, setPendingKey] = useState<string | null>(null);
 
   const handleSubmit = (statusKey: string) => {
@@ -24,7 +24,6 @@ export function StatusSign() {
     submitMutation.mutate(statusKey, {
       onSuccess: () => {
         setPendingKey(null);
-        // S-03: Different feedback for first sign vs update
         if (isUpdate) {
           toast("已更新，情绪变化也很正常");
         } else {
@@ -32,9 +31,7 @@ export function StatusSign() {
         }
       },
       onError: () => {
-        // S-06: Preserve selected state on failure (pendingKey stays)
         setPendingKey(null);
-        // S-07: Error toast
         toast.error("网络有点忙，点一次重试");
       },
     });
@@ -49,12 +46,12 @@ export function StatusSign() {
         <p className="mt-1 text-sm text-[var(--color-silver)]">今天的你，更接近哪一种状态？</p>
       </div>
 
-      {/* S-01: Status buttons */}
       <div className="grid gap-3 sm:grid-cols-2">
-        {OPTIONS.map((item) => {
+        {options.map((item) => {
           const count = getCountByKey(item.key);
           const isSelected = displayedKey === item.key;
           const percentage = total > 0 ? Math.round((count / total) * 100) : 0;
+          const emoji = STATUS_EMOJI_MAP[item.key] ?? "✨";
 
           return (
             <button
@@ -69,10 +66,9 @@ export function StatusSign() {
               onClick={() => handleSubmit(item.key)}
             >
               <div className="flex items-center gap-2">
-                <span>{item.emoji}</span>
+                <span>{emoji}</span>
                 <span className="font-medium">{item.name}</span>
               </div>
-              {/* S-05: Status percentage bar */}
               <div className="mt-2 flex items-center gap-2">
                 <div className="h-1 flex-1 overflow-hidden rounded-full bg-white/[0.1]">
                   <div
@@ -87,7 +83,12 @@ export function StatusSign() {
         })}
       </div>
 
-      {/* S-03/S-05: Feedback area */}
+      {options.length === 0 && (
+        <div className="rounded-2xl border border-dashed border-[var(--color-frost-border)] bg-white/[0.02] px-4 py-6 text-sm text-[var(--color-silver)]">
+          暂无可用状态选项，请先在后台配置。
+        </div>
+      )}
+
       <div className="flex items-center justify-between text-sm text-[var(--color-silver)]">
         <span>
           {displayedKey ? "不是你一个人这样。" : "默认游客可用，不需要登录。"}

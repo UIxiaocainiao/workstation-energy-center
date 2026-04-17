@@ -2,6 +2,8 @@ import type { Request, Response } from "express";
 import { z } from "zod";
 import { prisma } from "../lib/prisma";
 
+const ALLOWED_TOPIC_PATHS = ["/status", "/resonance", "/about", "/contacto"];
+
 export async function listStatusOptions(_req: Request, res: Response) {
   const items = await prisma.statusOption.findMany({ orderBy: { displayOrder: "asc" } });
   res.json({ items });
@@ -48,50 +50,11 @@ export async function upsertCard(req: Request, res: Response) {
   res.json({ item });
 }
 
-export async function listTranslatorTemplates(_req: Request, res: Response) {
-  const items = await prisma.translatorTemplate.findMany({ orderBy: [{ mode: "asc" }, { priority: "desc" }] });
-  res.json({ items });
-}
-
-export async function upsertTranslatorTemplate(req: Request, res: Response) {
-  const body = z.object({
-    id: z.string().optional(),
-    mode: z.enum(["boss_to_truth", "truth_to_polite"]),
-    keyword: z.string().default(""),
-    templateText: z.string().min(1),
-    priority: z.number().int().default(0),
-    status: z.enum(["active", "inactive"]).default("active")
-  }).parse(req.body);
-
-  const item = body.id
-    ? await prisma.translatorTemplate.update({ where: { id: body.id }, data: body })
-    : await prisma.translatorTemplate.create({ data: body });
-  res.json({ item });
-}
-
-export async function listComfortTexts(_req: Request, res: Response) {
-  const items = await prisma.comfortText.findMany({ orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }] });
-  res.json({ items });
-}
-
-export async function upsertComfortText(req: Request, res: Response) {
-  const body = z.object({
-    id: z.string().optional(),
-    category: z.string().default("general"),
-    content: z.string().min(1),
-    isDailyPick: z.boolean().default(false),
-    status: z.enum(["active", "inactive"]).default("active"),
-    sortOrder: z.number().int().default(0)
-  }).parse(req.body);
-
-  const item = body.id
-    ? await prisma.comfortText.update({ where: { id: body.id }, data: body })
-    : await prisma.comfortText.create({ data: body });
-  res.json({ item });
-}
-
 export async function listTopicModules(_req: Request, res: Response) {
   const items = await prisma.topicModule.findMany({
+    where: {
+      targetPath: { in: ALLOWED_TOPIC_PATHS }
+    },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
   });
   res.json({ items });
@@ -106,6 +69,13 @@ export async function upsertTopicModule(req: Request, res: Response) {
     copies: z.number().int().min(1).max(12).default(4),
     sortOrder: z.number().int().default(0),
     isActive: z.boolean().default(true)
+  }).superRefine((value, ctx) => {
+    if (!ALLOWED_TOPIC_PATHS.includes(value.targetPath)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "仅支持 /status、/resonance、/about、/contacto"
+      });
+    }
   }).parse(req.body);
 
   const item = body.id

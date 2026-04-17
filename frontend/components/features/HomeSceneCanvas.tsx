@@ -62,8 +62,8 @@ const HOVER_OPACITY = 1;
 const HOVER_SCALE = 1.16;
 const NON_HOVER_DIM_FACTOR = 0.34;
 
-const LINE_MIN_OPACITY = 0.032;
-const LINE_MAX_OPACITY = 0.14;
+const LINE_MIN_OPACITY = 0.075;
+const LINE_MAX_OPACITY = 0.28;
 const LINE_FLICKER_MIN = 4.2;
 const LINE_FLICKER_MAX = 7.4;
 const NODE_LINK_MIN = 12;
@@ -78,10 +78,6 @@ const BAND_WIDTH = 0.18;
 const BAND_OPACITY_BOOST = 0.12;
 const BAND_SOFTNESS = 1.18;
 
-const GLOW_SIZE = 3.8;
-const GLOW_OPACITY = 0.11;
-const GLOW_PULSE_AMPLITUDE = 0.018;
-const GLOW_PULSE_SPEED = 0.9;
 const CURSOR_HOVER_HINTS = [
   "这题你肯定有话说",
   "点开看看谁和你一样",
@@ -94,9 +90,9 @@ const CURSOR_HINT_CURSOR_ALLOWANCE = 18;
 
 const DEFAULT_LABEL_SEEDS: LabelSeed[] = [
   { text: "今日状态签到", target: "/status", copies: 6 },
-  { text: "黑话翻译器", target: "/blackwords", copies: 6 },
-  { text: "精选共鸣内容", target: "/resonance", copies: 5 },
-  { text: "补能盲盒", target: "/comfort", copies: 5 },
+  { text: "精选共鸣内容", target: "/resonance", copies: 6 },
+  { text: "关于项目", target: "/about", copies: 5 },
+  { text: "联系反馈", target: "/contacto", copies: 5 },
 ];
 
 function clamp(value: number, min: number, max: number) {
@@ -207,32 +203,6 @@ function buildConnectionPairs(points: THREE.Vector3[]) {
   }
 
   return pairs;
-}
-
-function createGlowTexture() {
-  const size = 256;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return null;
-
-  const gradient = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  gradient.addColorStop(0, "rgba(255,255,255,0.48)");
-  gradient.addColorStop(0.22, "rgba(255,255,255,0.18)");
-  gradient.addColorStop(0.5, "rgba(255,255,255,0.06)");
-  gradient.addColorStop(1, "rgba(255,255,255,0)");
-
-  ctx.clearRect(0, 0, size, size);
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, size, size);
-
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.minFilter = THREE.LinearFilter;
-  texture.magFilter = THREE.LinearFilter;
-  texture.generateMipmaps = false;
-  return texture;
 }
 
 function createLabelTexture(text: string) {
@@ -353,7 +323,7 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
         map: labelTexture.texture,
         transparent: true,
         depthWrite: false,
-        depthTest: true,
+        depthTest: false,
         opacity: LABEL_OPACITY_FRONT,
       });
 
@@ -361,6 +331,7 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
       const baseScaleY = LABEL_SCALE_BASE;
       const baseScaleX = LABEL_SCALE_BASE * (labelTexture.width / labelTexture.height);
       sprite.scale.set(baseScaleX, baseScaleY, 1);
+      sprite.renderOrder = 20;
 
       const position = fibonacciSpherePoint(index, labelTotal, LABEL_RADIUS);
       sprite.position.set(position.x, position.y, position.z);
@@ -399,6 +370,7 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
       });
 
       const line = new THREE.Line(geometry, material);
+      line.renderOrder = 10;
       root.add(line);
 
       lines.push({
@@ -412,24 +384,6 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
         currentOpacity: 0,
       });
     });
-
-    const glowTexture = createGlowTexture();
-    let glowSprite: THREE.Sprite | null = null;
-
-    if (glowTexture) {
-      const glowMaterial = new THREE.SpriteMaterial({
-        map: glowTexture,
-        transparent: true,
-        opacity: GLOW_OPACITY,
-        blending: THREE.AdditiveBlending,
-        depthWrite: false,
-        toneMapped: false,
-      });
-
-      glowSprite = new THREE.Sprite(glowMaterial);
-      glowSprite.scale.set(GLOW_SIZE, GLOW_SIZE, 1);
-      root.add(glowSprite);
-    }
 
     const pointer = new THREE.Vector2(-10, -10);
     const raycaster = new THREE.Raycaster();
@@ -808,13 +762,6 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
         item.line.visible = item.currentOpacity > 0.001;
       });
 
-      if (glowSprite) {
-        const basePulse = Math.sin(elapsed * GLOW_PULSE_SPEED) * GLOW_PULSE_AMPLITUDE;
-        glowSprite.position.set(0, 0, 0);
-        glowSprite.material.opacity = GLOW_OPACITY + basePulse;
-        glowSprite.scale.setScalar(GLOW_SIZE + 0.08 * Math.sin(elapsed * 0.75));
-      }
-
       if (hasFinePointer && customCursor) {
         if (hoveredLabel) {
           if (!isCursorHovering) {
@@ -885,12 +832,6 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
         line.geometry.dispose();
         line.material.dispose();
       });
-
-      if (glowSprite) {
-        const material = glowSprite.material as THREE.SpriteMaterial;
-        if (material.map) material.map.dispose();
-        material.dispose();
-      }
 
       renderer.dispose();
     };

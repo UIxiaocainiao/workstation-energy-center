@@ -1,6 +1,8 @@
 import type { Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 
+const ALLOWED_TOPIC_PATHS = ["/status", "/resonance", "/about", "/contacto"];
+
 export async function getSiteConfig(_req: Request, res: Response) {
   const config = await prisma.siteConfig.findFirst({
     orderBy: { createdAt: "desc" }
@@ -18,7 +20,10 @@ export async function getSiteConfig(_req: Request, res: Response) {
 
 export async function getTopicModules(_req: Request, res: Response) {
   const items = await prisma.topicModule.findMany({
-    where: { isActive: true },
+    where: {
+      isActive: true,
+      targetPath: { in: ALLOWED_TOPIC_PATHS }
+    },
     orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }]
   });
 

@@ -17,17 +17,17 @@ async function main() {
 
   const topicModules = [
     { topicKey: "topic_01", topicTitle: "今天靠哪口仙气撑着？", targetPath: "/status", copies: 2, sortOrder: 1, isActive: true },
-    { topicKey: "topic_02", topicTitle: "最怕老板哪句经典台词？", targetPath: "/blackwords", copies: 2, sortOrder: 2, isActive: true },
+    { topicKey: "topic_02", topicTitle: "今天先给自己打几分状态？", targetPath: "/status", copies: 2, sortOrder: 2, isActive: true },
     { topicKey: "topic_03", topicTitle: "下班前又是谁在加戏？", targetPath: "/resonance", copies: 2, sortOrder: 3, isActive: true },
-    { topicKey: "topic_04", topicTitle: "“在吗”一响，你心凉了吗？", targetPath: "/comfort", copies: 2, sortOrder: 4, isActive: true },
+    { topicKey: "topic_04", topicTitle: "这周最想吐槽的瞬间是？", targetPath: "/resonance", copies: 2, sortOrder: 4, isActive: true },
     { topicKey: "topic_05", topicTitle: "最近耗你电的是活还是人？", targetPath: "/status", copies: 2, sortOrder: 5, isActive: true },
-    { topicKey: "topic_06", topicTitle: "你多久没尝过准点下班了？", targetPath: "/blackwords", copies: 2, sortOrder: 6, isActive: true },
+    { topicKey: "topic_06", topicTitle: "最近一次真放松是什么时候？", targetPath: "/about", copies: 2, sortOrder: 6, isActive: true },
     { topicKey: "topic_07", topicTitle: "哪种会议最适合灵魂出走？", targetPath: "/resonance", copies: 2, sortOrder: 7, isActive: true },
-    { topicKey: "topic_08", topicTitle: "你还没辞职，是谁拦着你？", targetPath: "/comfort", copies: 2, sortOrder: 8, isActive: true },
+    { topicKey: "topic_08", topicTitle: "这个项目最离谱的一幕是？", targetPath: "/resonance", copies: 2, sortOrder: 8, isActive: true },
     { topicKey: "topic_09", topicTitle: "上班是讨生活还是渡劫？", targetPath: "/status", copies: 2, sortOrder: 9, isActive: true },
-    { topicKey: "topic_10", topicTitle: "哪句黑话最能气笑你？", targetPath: "/blackwords", copies: 2, sortOrder: 10, isActive: true },
+    { topicKey: "topic_10", topicTitle: "你最近最真实的状态是？", targetPath: "/status", copies: 2, sortOrder: 10, isActive: true },
     { topicKey: "topic_11", topicTitle: "你最想拉黑哪类消息？", targetPath: "/resonance", copies: 2, sortOrder: 11, isActive: true },
-    { topicKey: "topic_12", topicTitle: "今天想给自己发句啥？", targetPath: "/comfort", copies: 2, sortOrder: 12, isActive: true }
+    { topicKey: "topic_12", topicTitle: "想提需求或反馈？", targetPath: "/contacto", copies: 2, sortOrder: 12, isActive: true }
   ];
 
   for (const item of topicModules) {
@@ -85,60 +85,6 @@ async function main() {
     await prisma.resonanceCard.create({ data: item });
   }
 
-  const templates = [
-    {
-      mode: "boss_to_truth",
-      keyword: "不复杂",
-      templateText: "真实含义：这事不叫简单，只是默认由你承受复杂度。",
-      priority: 100
-    },
-    {
-      mode: "boss_to_truth",
-      keyword: "跟进",
-      templateText: "真实含义：先由你把这件事接住，后面进度也主要由你兜。",
-      priority: 90
-    },
-    {
-      mode: "truth_to_polite",
-      keyword: "不是我的",
-      templateText: "更体面的表达：当前任务与我的职责边界暂不完全匹配，建议先确认归属。",
-      priority: 100
-    },
-    {
-      mode: "truth_to_polite",
-      keyword: "时间不够",
-      templateText: "更体面的表达：按照当前排期评估，交付时间存在明显风险，建议协调资源或调整节点。",
-      priority: 90
-    }
-  ];
-
-  for (const item of templates) {
-    await prisma.translatorTemplate.create({ data: item });
-  }
-
-  const examples = [
-    { mode: "boss_to_truth", content: "这个需求不复杂", sortOrder: 1 },
-    { mode: "boss_to_truth", content: "你先跟进一下", sortOrder: 2 },
-    { mode: "boss_to_truth", content: "我们再优化一下细节", sortOrder: 3 },
-    { mode: "truth_to_polite", content: "这活不是我的", sortOrder: 1 },
-    { mode: "truth_to_polite", content: "这个需求改太多次了", sortOrder: 2 },
-    { mode: "truth_to_polite", content: "这时间根本不够", sortOrder: 3 }
-  ];
-
-  for (const item of examples) {
-    await prisma.translatorExample.create({ data: item });
-  }
-
-  const comfortTexts = [
-    { category: "daily", content: "今天辛苦了，不是你不够强，是你已经扛了很久。", isDailyPick: true, sortOrder: 1 },
-    { category: "general", content: "先别急着振作，允许自己先喘一口气。", sortOrder: 2 },
-    { category: "general", content: "你不是效率下降了，你只是需要补能。", sortOrder: 3 },
-    { category: "general", content: "能撑到现在，已经说明你很努力了。", sortOrder: 4 }
-  ];
-
-  for (const item of comfortTexts) {
-    await prisma.comfortText.create({ data: item });
-  }
 }
 
 main()

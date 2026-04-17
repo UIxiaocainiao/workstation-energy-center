@@ -4,8 +4,6 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/", label: "首页", icon: "🏠" },
-  { href: "/blackwords", label: "黑话翻译器", icon: "🔄" },
-  { href: "/comfort", label: "今日补能", icon: "⚡" },
   { href: "/about", label: "关于项目", icon: "💡" },
 ];
 

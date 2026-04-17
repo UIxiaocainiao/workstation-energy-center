@@ -182,7 +182,7 @@ export default function TopicModulesManagerPage() {
               <Input
                 value={form.topicKey}
                 onChange={(event) => setForm((prev) => ({ ...prev, topicKey: event.target.value }))}
-                placeholder="topicKey（如 translator）"
+                placeholder="topicKey（如 status）"
               />
               <Input
                 value={form.topicTitle}
@@ -192,7 +192,7 @@ export default function TopicModulesManagerPage() {
               <Input
                 value={form.targetPath}
                 onChange={(event) => setForm((prev) => ({ ...prev, targetPath: event.target.value }))}
-                placeholder="跳转路径（如 /blackwords）"
+                placeholder="跳转路径（如 /status）"
               />
 
               <div className="grid grid-cols-2 gap-3">

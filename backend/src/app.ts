@@ -4,8 +4,6 @@ import morgan from "morgan";
 import { env } from "./config/env";
 import statusRoutes from "./routes/status";
 import cardsRoutes from "./routes/cards";
-import translatorRoutes from "./routes/translator";
-import comfortRoutes from "./routes/comfort";
 import configRoutes from "./routes/config";
 import adminRoutes from "./routes/admin";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
@@ -23,8 +21,6 @@ export function createApp() {
 
   app.use("/api/status", statusRoutes);
   app.use("/api/cards", cardsRoutes);
-  app.use("/api/translator", translatorRoutes);
-  app.use("/api/comfort", comfortRoutes);
   app.use("/api/config", configRoutes);
   app.use("/api/admin", adminRoutes);
 

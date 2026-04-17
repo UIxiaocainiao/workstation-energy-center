@@ -8,8 +8,8 @@ export default function AboutPage() {
         <Card className="flex flex-col gap-4">
           <h1 className="section-title text-3xl font-medium">关于项目</h1>
           <p className="text-white/75">
-            工位补能站是一个服务于打工人情绪场景的网页产品，通过今日状态签到、黑话翻译器、下班倒计时、
-            精选共鸣内容和补能文案，帮助用户获得被理解、被释放、被安慰的感受。
+            工位补能站是一个服务于打工人情绪场景的网页产品，通过今日状态签到、精选共鸣内容和场景化互动，
+            帮助用户获得被理解、被释放、被安慰的感受。
           </p>
           <p className="text-[var(--color-silver)]">
             V1 版本以轻互动和传播效率为主，不做重社区、不强依赖登录，优先验证传播与复访。

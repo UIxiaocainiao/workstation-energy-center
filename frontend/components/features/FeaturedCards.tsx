@@ -119,9 +119,9 @@ export function FeaturedCards() {
           <p className="mt-1 text-sm text-[var(--color-silver)]">高压工作日里，你并不是一个人。</p>
         </div>
         <Card className="py-12 text-center">
-          <p className="text-[var(--color-silver)]">今天的共鸣内容正在路上，先试试黑话翻译器</p>
-          <Link href="/blackwords" className="mt-3 inline-block text-sm text-brand-500 hover:text-brand-100">
-            去翻译一句 →
+          <p className="text-[var(--color-silver)]">今天的共鸣内容正在路上，先去领个今日状态</p>
+          <Link href="/status" className="mt-3 inline-block text-sm text-brand-500 hover:text-brand-100">
+            去状态签到 →
           </Link>
         </Card>
       </section>

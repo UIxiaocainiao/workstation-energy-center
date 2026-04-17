@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import { Card } from "@/components/ui/Card";
 import { useCountdown } from "@/hooks/useCountdown";
+import { useSiteConfig } from "@/hooks/useSiteConfig";
 import { cn } from "@/lib/utils";
 
-/** T-04: Get time-aware tip text */
 function getOffWorkTip(ms: number): string {
   if (ms <= 0) return "今天辛苦了，记得下线休息";
   return "再撑一会儿，工位即将解除绑定";
@@ -15,9 +15,10 @@ function isWeekend(): boolean {
 }
 
 export function Countdown() {
+  const { config, isLoading } = useSiteConfig();
   const { state, format } = useCountdown({
-    offWorkTime: "18:00",
-    payday: 15,
+    offWorkTime: config.offWorkTime,
+    payday: config.payday,
   });
 
   const offWorkTip = getOffWorkTip(state.offWorkMs);
@@ -26,7 +27,7 @@ export function Countdown() {
   const cards = useMemo(
     () => [
       {
-        label: weekend ? "今日可进入充电模式" : "距离下班还有",
+        label: weekend ? "今日可进入充电模式" : `距离 ${config.offWorkTime} 下班还有`,
         value: weekend ? "🔋 充电中" : format(state.offWorkMs),
         tip: weekend ? "今天不用上班，给自己充个电" : offWorkTip,
         primary: true,
@@ -38,36 +39,46 @@ export function Countdown() {
         primary: false,
       },
       {
-        label: "距离发工资还有",
+        label: `距离 ${config.payday} 号发工资还有`,
         value: format(state.paydayMs),
         tip: "这笔精神损失费正在路上",
         primary: false,
       },
     ],
-    [state, format, offWorkTip, weekend]
+    [config.offWorkTime, config.payday, state, format, offWorkTip, weekend]
   );
 
   return (
-    <section className="grid gap-4 md:grid-cols-3">
-      {cards.map((item) => (
-        <Card
-          key={item.label}
-          className={cn(
-            item.primary && "border-brand-500/30 bg-brand-500/10"
-          )}
-        >
-          <div className="text-sm text-[var(--color-silver)]">{item.label}</div>
-          <div
+    <section className="flex flex-col gap-4">
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <h2 className="section-title text-2xl font-medium">下班倒计时</h2>
+          <p className="mt-1 text-sm text-[var(--color-silver)]">把今天撑过去，也算一种胜利。</p>
+        </div>
+        {isLoading && <span className="text-xs text-white/45">正在读取站点配置...</span>}
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {cards.map((item) => (
+          <Card
+            key={item.label}
             className={cn(
-              "mt-2 text-2xl font-semibold tabular-nums",
-              item.primary && "text-brand-100"
+              item.primary && "border-brand-500/30 bg-brand-500/10"
             )}
           >
-            {item.value}
-          </div>
-          <div className="mt-2 text-sm text-white/45">{item.tip}</div>
-        </Card>
-      ))}
+            <div className="text-sm text-[var(--color-silver)]">{item.label}</div>
+            <div
+              className={cn(
+                "mt-2 text-2xl font-semibold tabular-nums",
+                item.primary && "text-brand-100"
+              )}
+            >
+              {item.value}
+            </div>
+            <div className="mt-2 text-sm text-white/45">{item.tip}</div>
+          </Card>
+        ))}
+      </div>
     </section>
   );
 }
