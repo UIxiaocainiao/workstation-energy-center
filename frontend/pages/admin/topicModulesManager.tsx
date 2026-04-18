@@ -5,6 +5,7 @@ import { PageShell } from "@/components/layout/PageShell";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { useLocale } from "@/hooks/useLocale";
 import { apiClient } from "@/lib/apiClient";
 
 type TopicModuleItem = {
@@ -45,6 +46,7 @@ function createEmptyForm(): TopicModuleForm {
 }
 
 export default function TopicModulesManagerPage() {
+  const { isZh } = useLocale();
   const queryClient = useQueryClient();
   const [adminToken, setAdminToken] = useState("change-me");
   const [form, setForm] = useState<TopicModuleForm>(createEmptyForm());
@@ -72,12 +74,12 @@ export default function TopicModulesManagerPage() {
         headers,
       }),
     onSuccess: () => {
-      toast("已保存话题模块");
+      toast(isZh ? "已保存话题模块" : "Topic module saved");
       setForm(createEmptyForm());
       queryClient.invalidateQueries({ queryKey: ["admin-topic-modules"] });
     },
     onError: (error: Error) => {
-      toast.error(error.message.includes("Unauthorized") ? "管理员令牌无效" : "保存失败，请重试");
+      toast.error(error.message.includes("Unauthorized") ? (isZh ? "管理员令牌无效" : "Invalid admin token") : isZh ? "保存失败，请重试" : "Save failed, please retry");
     },
   });
 
@@ -85,7 +87,7 @@ export default function TopicModulesManagerPage() {
     if (typeof window !== "undefined") {
       localStorage.setItem("admin_token", adminToken);
     }
-    toast("已保存管理员令牌");
+    toast(isZh ? "已保存管理员令牌" : "Admin token saved");
     listQuery.refetch();
   };
 
@@ -103,7 +105,7 @@ export default function TopicModulesManagerPage() {
 
   const submit = () => {
     if (!form.topicKey.trim() || !form.topicTitle.trim() || !form.targetPath.trim()) {
-      toast.error("topicKey / 话题标题 / 跳转路径不能为空");
+      toast.error(isZh ? "topicKey / 话题标题 / 跳转路径不能为空" : "topicKey / topic title / target path cannot be empty");
       return;
     }
 
@@ -123,29 +125,25 @@ export default function TopicModulesManagerPage() {
         <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
           <Card>
             <div className="flex items-center justify-between gap-3">
-              <h1 className="section-title text-2xl font-medium">话题模块管理</h1>
+              <h1 className="section-title text-2xl font-medium">{isZh ? "话题模块管理" : "Topic Module Manager"}</h1>
               <Button size="sm" onClick={() => listQuery.refetch()}>
-                刷新
+                {isZh ? "刷新" : "Refresh"}
               </Button>
             </div>
 
             <div className="mt-4 grid gap-2 md:grid-cols-[1fr_auto]">
-              <Input
-                value={adminToken}
-                onChange={(event) => setAdminToken(event.target.value)}
-                placeholder="管理员令牌"
-              />
-              <Button onClick={saveToken}>保存令牌</Button>
+              <Input value={adminToken} onChange={(event) => setAdminToken(event.target.value)} placeholder={isZh ? "管理员令牌" : "Admin token"} />
+              <Button onClick={saveToken}>{isZh ? "保存令牌" : "Save Token"}</Button>
             </div>
 
             <div className="mt-4 overflow-hidden rounded-xl border border-[var(--color-frost-border)]">
               <div className="grid grid-cols-[1fr_1.2fr_1fr_90px_90px_90px] gap-2 border-b border-[var(--color-frost-border)] bg-white/[0.04] px-3 py-2 text-xs text-white/70">
                 <span>topicKey</span>
-                <span>话题标题</span>
-                <span>跳转路径</span>
+                <span>{isZh ? "话题标题" : "Topic Title"}</span>
+                <span>{isZh ? "跳转路径" : "Target Path"}</span>
                 <span>copies</span>
-                <span>排序</span>
-                <span>操作</span>
+                <span>{isZh ? "排序" : "Order"}</span>
+                <span>{isZh ? "操作" : "Action"}</span>
               </div>
 
               <div className="max-h-[420px] overflow-auto">
@@ -159,40 +157,37 @@ export default function TopicModulesManagerPage() {
                     <span className="truncate text-white/70">{item.targetPath}</span>
                     <span>{item.copies}</span>
                     <span>{item.sortOrder}</span>
-                    <button
-                      className="text-left text-brand-100 hover:text-white"
-                      onClick={() => startEdit(item)}
-                    >
-                      编辑
+                    <button className="text-left text-brand-100 hover:text-white" onClick={() => startEdit(item)}>
+                      {isZh ? "编辑" : "Edit"}
                     </button>
                   </div>
                 ))}
 
                 {listQuery.isSuccess && listQuery.data.items.length === 0 && (
-                  <div className="px-3 py-6 text-sm text-[var(--color-silver)]">暂无话题模块配置</div>
+                  <div className="px-3 py-6 text-sm text-[var(--color-silver)]">{isZh ? "暂无话题模块配置" : "No topic module configuration yet"}</div>
                 )}
               </div>
             </div>
           </Card>
 
           <Card>
-            <h2 className="section-title text-xl font-medium">{form.id ? "编辑话题模块" : "新增话题模块"}</h2>
+            <h2 className="section-title text-xl font-medium">{form.id ? (isZh ? "编辑话题模块" : "Edit Topic Module") : isZh ? "新增话题模块" : "Create Topic Module"}</h2>
 
             <div className="mt-4 space-y-3">
               <Input
                 value={form.topicKey}
                 onChange={(event) => setForm((prev) => ({ ...prev, topicKey: event.target.value }))}
-                placeholder="topicKey（如 status）"
+                placeholder={isZh ? "topicKey（如 status）" : "topicKey (e.g. status)"}
               />
               <Input
                 value={form.topicTitle}
                 onChange={(event) => setForm((prev) => ({ ...prev, topicTitle: event.target.value }))}
-                placeholder="话题标题（节点展示文案）"
+                placeholder={isZh ? "话题标题（节点展示文案）" : "Topic title (node label)"}
               />
               <Input
                 value={form.targetPath}
                 onChange={(event) => setForm((prev) => ({ ...prev, targetPath: event.target.value }))}
-                placeholder="跳转路径（如 /status）"
+                placeholder={isZh ? "跳转路径（如 /status）" : "Target path (e.g. /status)"}
               />
 
               <div className="grid grid-cols-2 gap-3">
@@ -208,7 +203,7 @@ export default function TopicModulesManagerPage() {
                   type="number"
                   value={form.sortOrder}
                   onChange={(event) => setForm((prev) => ({ ...prev, sortOrder: Number(event.target.value) }))}
-                  placeholder="排序"
+                  placeholder={isZh ? "排序" : "Order"}
                 />
               </div>
 
@@ -218,15 +213,15 @@ export default function TopicModulesManagerPage() {
                   checked={form.isActive}
                   onChange={(event) => setForm((prev) => ({ ...prev, isActive: event.target.checked }))}
                 />
-                启用（首页场景可见）
+                {isZh ? "启用（首页场景可见）" : "Enabled (visible on home scene)"}
               </label>
 
               <div className="flex gap-2">
                 <Button onClick={submit} disabled={saveMutation.isPending}>
-                  {saveMutation.isPending ? "保存中..." : "保存"}
+                  {saveMutation.isPending ? (isZh ? "保存中..." : "Saving...") : isZh ? "保存" : "Save"}
                 </Button>
                 <Button variant="ghost" onClick={() => setForm(createEmptyForm())}>
-                  清空
+                  {isZh ? "清空" : "Reset"}
                 </Button>
               </div>
             </div>

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import * as THREE from "three";
 import { TextType } from "@/components/ui/TextType";
 import { gsap } from "gsap";
+import { useLocale, type Locale } from "@/hooks/useLocale";
 
 type Point3 = { x: number; y: number; z: number };
 
@@ -78,22 +79,34 @@ const BAND_WIDTH = 0.18;
 const BAND_OPACITY_BOOST = 0.12;
 const BAND_SOFTNESS = 1.18;
 
-const CURSOR_HOVER_HINTS = [
-  "这题你肯定有话说",
-  "点开看看谁和你一样",
-  "来，说点真的",
-];
+const CURSOR_HOVER_HINTS: Record<Locale, string[]> = {
+  zh: ["这题你肯定有话说", "点开看看谁和你一样", "来，说点真的"],
+  en: ["You probably have thoughts on this", "Tap to find people like you", "Say something real"],
+};
 const CURSOR_HINT_FONT = `600 13px "ABC Favorit", "Avenir Next", "Segoe UI", sans-serif`;
 const CURSOR_HINT_BASE_WIDTH = 174;
 const CURSOR_HINT_HORIZONTAL_PADDING = 28;
 const CURSOR_HINT_CURSOR_ALLOWANCE = 18;
 
-const DEFAULT_LABEL_SEEDS: LabelSeed[] = [
-  { text: "今日状态签到", target: "/status", copies: 6 },
-  { text: "精选共鸣内容", target: "/resonance", copies: 6 },
-  { text: "关于项目", target: "/about", copies: 5 },
-  { text: "联系反馈", target: "/contacto", copies: 5 },
-];
+const DRAG_HINT: Record<Locale, string> = {
+  zh: "滚动或拖拽以探索",
+  en: "Scroll or drag to explore",
+};
+
+const DEFAULT_LABEL_SEEDS: Record<Locale, LabelSeed[]> = {
+  zh: [
+    { text: "今日状态签到", target: "/status", copies: 6 },
+    { text: "精选共鸣内容", target: "/resonance", copies: 6 },
+    { text: "关于项目", target: "/about", copies: 5 },
+    { text: "联系反馈", target: "/contacto", copies: 5 },
+  ],
+  en: [
+    { text: "Daily Mood Check-in", target: "/status", copies: 6 },
+    { text: "Featured Resonance", target: "/resonance", copies: 6 },
+    { text: "About", target: "/about", copies: 5 },
+    { text: "Contact", target: "/contacto", copies: 5 },
+  ],
+};
 
 function clamp(value: number, min: number, max: number) {
   return Math.max(min, Math.min(max, value));
@@ -256,7 +269,7 @@ function getClickThreshold() {
   return window.matchMedia("(pointer: coarse)").matches ? 22 : 10;
 }
 
-function getCursorHintPillWidth() {
+function getCursorHintPillWidth(hints: string[]) {
   if (typeof document === "undefined") return CURSOR_HINT_BASE_WIDTH;
 
   const canvas = document.createElement("canvas");
@@ -264,19 +277,22 @@ function getCursorHintPillWidth() {
   if (!ctx) return CURSOR_HINT_BASE_WIDTH;
 
   ctx.font = CURSOR_HINT_FONT;
-  const widest = CURSOR_HOVER_HINTS.reduce((max, hint) => Math.max(max, ctx.measureText(hint).width), 0);
+  const widest = hints.reduce((max, hint) => Math.max(max, ctx.measureText(hint).width), 0);
   const fullWidth = Math.ceil(widest + CURSOR_HINT_HORIZONTAL_PADDING + CURSOR_HINT_CURSOR_ALLOWANCE);
   return Math.max(CURSOR_HINT_BASE_WIDTH, fullWidth);
 }
 
 export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
   const router = useRouter();
+  const { locale } = useLocale();
   const [isCursorHintMounted, setIsCursorHintMounted] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const hintRef = useRef<HTMLDivElement | null>(null);
   const customCursorRef = useRef<HTMLDivElement | null>(null);
   const cursorHintWrapRef = useRef<HTMLSpanElement | null>(null);
   const transitionOverlayRef = useRef<HTMLDivElement | null>(null);
+  const cursorHints = CURSOR_HOVER_HINTS[locale];
+  const defaultLabelSeeds = DEFAULT_LABEL_SEEDS[locale];
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -312,7 +328,7 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
     const labels: LabelEntry[] = [];
     const labelSprites: THREE.Sprite[] = [];
 
-    const labelOrder = buildLabelOrder(topicSeeds && topicSeeds.length > 0 ? topicSeeds : DEFAULT_LABEL_SEEDS);
+    const labelOrder = buildLabelOrder(topicSeeds && topicSeeds.length > 0 ? topicSeeds : defaultLabelSeeds);
     const labelTotal = labelOrder.length;
 
     labelOrder.forEach((item, index) => {
@@ -404,7 +420,7 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
 
     const updateCursorPillWidth = () => {
       if (!hasFinePointer || !customCursor) return;
-      customCursor.style.setProperty("--cursor-pill-width", `${getCursorHintPillWidth()}px`);
+      customCursor.style.setProperty("--cursor-pill-width", `${getCursorHintPillWidth(cursorHints)}px`);
     };
 
     if (hasFinePointer && customCursor) {
@@ -835,7 +851,7 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
 
       renderer.dispose();
     };
-  }, [router, topicSeeds]);
+  }, [cursorHints, defaultLabelSeeds, router, topicSeeds]);
 
   return (
     <div id="sceneWrap" className="scene-wrap" aria-hidden="true">
@@ -847,7 +863,7 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
       />
       <div className="ui-layer" id="uiLayer" aria-hidden="true">
         <div className="ui-layer__hint" id="dragHint" ref={hintRef}>
-          scroll or drag to explore
+          {DRAG_HINT[locale]}
         </div>
       </div>
       <div className="scene-custom-cursor" aria-hidden="true" ref={customCursorRef}>
@@ -856,7 +872,7 @@ export function HomeSceneCanvas({ topicSeeds }: { topicSeeds?: LabelSeed[] }) {
             <TextType
               as="span"
               className="scene-custom-cursor__text"
-              text={CURSOR_HOVER_HINTS}
+              text={cursorHints}
               typingSpeed={52}
               deletingSpeed={30}
               pauseDuration={1200}

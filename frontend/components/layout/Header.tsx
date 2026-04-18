@@ -1,22 +1,29 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useLocale } from "@/hooks/useLocale";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { href: "/", label: "首页", icon: "🏠" },
-  { href: "/about", label: "关于项目", icon: "💡" },
-];
+import { BrandLogoMark } from "@/components/branding/BrandLogoMark";
 
 export function Header() {
   const router = useRouter();
+  const { isZh } = useLocale();
+
+  const navItems = [
+    { href: "/", label: isZh ? "首页" : "Home", icon: "🏠" },
+    { href: "/about", label: isZh ? "关于项目" : "About", icon: "💡" },
+  ];
 
   return (
     <>
       {/* Desktop top navigation */}
       <header className="sticky top-0 z-40 border-b border-[var(--color-frost-border)] bg-black/85 backdrop-blur">
         <div className="container-page flex h-16 items-center justify-between">
-          <Link href="/" className="text-lg font-medium section-title text-[var(--color-near-white)]">
-            工位补能站
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-lg font-medium section-title text-[var(--color-near-white)]"
+          >
+            <BrandLogoMark className="h-5 w-5 shrink-0" />
+            <span>{isZh ? "工位补能站" : "Workstation Energy Center"}</span>
           </Link>
           <nav className="hidden gap-2 md:flex">
             {navItems.map((item) => (

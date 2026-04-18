@@ -11,6 +11,8 @@ type CountdownState = {
   paydayMs: number;
 };
 
+type CountdownLocale = "zh" | "en";
+
 function getNextWeekend(now: Date) {
   const target = new Date(now);
   const day = now.getDay();
@@ -41,7 +43,7 @@ function getTodayOffWork(now: Date, offWorkTime: string) {
   return target;
 }
 
-export function useCountdown(config: CountdownTarget) {
+export function useCountdown(config: CountdownTarget, locale: CountdownLocale = "zh") {
   const [state, setState] = useState<CountdownState>({
     offWorkMs: 0,
     weekendMs: 0,
@@ -70,9 +72,12 @@ export function useCountdown(config: CountdownTarget) {
       const hours = Math.floor((totalSeconds % 86400) / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
       const seconds = totalSeconds % 60;
+      if (locale === "en") {
+        return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }
       return `${days}天 ${hours}时 ${minutes}分 ${seconds}秒`;
     },
-    []
+    [locale]
   );
 
   return { state, format };

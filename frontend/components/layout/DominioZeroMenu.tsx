@@ -2,8 +2,15 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { gsap } from "gsap";
+import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { useLocale } from "@/hooks/useLocale";
+import { BrandLogoMark } from "@/components/branding/BrandLogoMark";
+
+type MenuKey = "home" | "about" | "login" | "register";
 
 type MenuItem = {
+  key: MenuKey;
   label: string;
   href: string;
   hoverImg: string;
@@ -13,24 +20,79 @@ type MenuItem = {
 const HOVER_IMAGES = {
   home: "https://dominiozero.es/assets/img/menu/home.jpg",
   about: "https://dominiozero.es/assets/img/menu/about.jpg",
+  auth: "https://dominiozero.es/assets/img/menu/about.jpg",
 } as const;
 
-const menuItems: MenuItem[] = [
+const MENU_BASE = [
   {
-    label: "首页",
+    key: "home" as const,
     href: "/",
     hoverImg: HOVER_IMAGES.home,
-    isActive: (pathname) => pathname === "/",
+    isActive: (pathname: string) => pathname === "/",
   },
   {
-    label: "关于项目",
+    key: "about" as const,
     href: "/about",
     hoverImg: HOVER_IMAGES.about,
   },
+  {
+    key: "login" as const,
+    href: "/auth/login",
+    hoverImg: HOVER_IMAGES.auth,
+  },
+  {
+    key: "register" as const,
+    href: "/auth/register",
+    hoverImg: HOVER_IMAGES.auth,
+  },
 ];
+
+const MENU_LABELS: Record<"zh" | "en", Record<MenuKey, string>> = {
+  zh: {
+    home: "首页",
+    about: "关于项目",
+    login: "登录",
+    register: "注册",
+  },
+  en: {
+    home: "Home",
+    about: "About",
+    login: "Log In",
+    register: "Sign Up",
+  },
+};
+
+const COPY = {
+  zh: {
+    logoText: "工位补能站",
+    goHome: "回到首页",
+    logout: "退出",
+    login: "登录",
+    register: "注册",
+    logoutSuccess: "已退出登录",
+    logoutFailed: "退出失败，请稍后再试",
+    openMenu: "打开菜单",
+    closeMenu: "关闭菜单",
+    switchLanguage: "切换到英文",
+  },
+  en: {
+    logoText: "Workstation Energy Center",
+    goHome: "Go home",
+    logout: "Log out",
+    login: "Log In",
+    register: "Sign Up",
+    logoutSuccess: "Logged out",
+    logoutFailed: "Logout failed, please try again",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+    switchLanguage: "Switch to Chinese",
+  },
+} as const;
 
 export function DominioZeroMenu() {
   const router = useRouter();
+  const { user, isAuthenticated, isReady, logout } = useAuth();
+  const { locale, toggleLocale } = useLocale();
   const headerRef = useRef<HTMLElement | null>(null);
   const menuRef = useRef<HTMLElement | null>(null);
   const previewImageRef = useRef<HTMLImageElement | null>(null);
@@ -38,13 +100,23 @@ export function DominioZeroMenu() {
 
   const [isOpen, setIsOpen] = useState(false);
 
+  const copy = COPY[locale];
+  const menuItems = useMemo<MenuItem[]>(
+    () =>
+      MENU_BASE.map((item) => ({
+        ...item,
+        label: MENU_LABELS[locale][item.key],
+      })),
+    [locale],
+  );
+
   const activeItem = useMemo(
     () =>
       menuItems.find((item) => {
         if (item.isActive) return item.isActive(router.pathname);
         return router.pathname === item.href || router.pathname.startsWith(`${item.href}/`);
       }),
-    [router.pathname],
+    [menuItems, router.pathname],
   );
 
   const [previewImage, setPreviewImage] = useState(activeItem?.hoverImg ?? HOVER_IMAGES.home);
@@ -147,18 +219,53 @@ export function DominioZeroMenu() {
     gsap.fromTo(node, { scale: 1 }, { scale: 1.05, duration: 0.35, ease: "power2.out" });
   }, [previewImage, isOpen]);
 
+  async function onLogout() {
+    try {
+      await logout();
+      toast.success(copy.logoutSuccess);
+      await router.push("/");
+    } catch {
+      toast.error(copy.logoutFailed);
+    }
+  }
+
   return (
     <>
       <header ref={headerRef} className="dz-main-header">
-        <Link href="/" className="dz-logo" aria-label="Go Home">
-          工位补能站
+        <Link href="/" className="dz-logo" aria-label={copy.goHome}>
+          <BrandLogoMark className="dz-logo-mark" />
+          <span className="dz-logo-text">{copy.logoText}</span>
         </Link>
 
         <div className="dz-menu">
+          <div className="dz-auth-actions">
+            <button type="button" className="dz-auth-link" onClick={toggleLocale} title={copy.switchLanguage}>
+              {locale === "zh" ? "EN" : "中"}
+            </button>
+            {!isReady ? (
+              <span className="dz-auth-placeholder">...</span>
+            ) : isAuthenticated && user ? (
+              <>
+                <span className="dz-auth-user">{user.username}</span>
+                <button type="button" className="dz-auth-link" onClick={() => void onLogout()}>
+                  {copy.logout}
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/auth/login" className="dz-auth-link">
+                  {copy.login}
+                </Link>
+                <Link href="/auth/register" className="dz-auth-link dz-auth-link-primary">
+                  {copy.register}
+                </Link>
+              </>
+            )}
+          </div>
           <button
             className="dz-menu-button"
             type="button"
-            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-label={isOpen ? copy.closeMenu : copy.openMenu}
             aria-expanded={isOpen}
             onClick={() => setIsOpen((value) => !value)}
           >
