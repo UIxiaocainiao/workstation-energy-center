@@ -6,6 +6,7 @@ import statusRoutes from "./routes/status";
 import cardsRoutes from "./routes/cards";
 import configRoutes from "./routes/config";
 import adminRoutes from "./routes/admin";
+import authRoutes from "./routes/auth";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
 
 export function createApp() {
@@ -23,6 +24,7 @@ export function createApp() {
   app.use("/api/cards", cardsRoutes);
   app.use("/api/config", configRoutes);
   app.use("/api/admin", adminRoutes);
+  app.use("/api/auth", authRoutes);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
